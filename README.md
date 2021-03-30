@@ -1,5 +1,7 @@
 # Redirerector
-Redirerector streamlines the process of spinning up and tearing down redirector infrastructure and configuring tunnels/remote port forwarding. Currently, I've only included DigitalOcean as I wanted to build a PoC; I plan on adding Linode/others when I've got some time.
+Redirerector automates the process of spinning up/tearing down redirector infrastructure, tunneling traffic via sshuttle, and remote port forwarding your VPS_IP:18080 to LOCAL:8080.
+
+At this point in time DigitalOcean is only supported as I wanted to build a quick PoC; I plan on adding Linode/other VPS' as well as multi-redirector support soon. 
 
 ```python
     ____           ___                          __                        
@@ -17,6 +19,5 @@ Redirerector streamlines the process of spinning up and tearing down redirector 
 ------------------------------
 Enter your choice [1-9]:
   ```
-
 
 This is a work in progress.
