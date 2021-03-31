@@ -273,7 +273,6 @@ def get_menu_choice():
             confirm = input("Are you sure you want to get a new redirector [y/n]? ")
             if confirm == 'y':
                 destroy_tunnels()
-                
                 destroy_redirectors(redirector_tag)
                 generate_name()
                 build_droplet()
