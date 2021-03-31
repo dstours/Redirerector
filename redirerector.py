@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import requests, json, time, paramiko, random, subprocess, os, sys
+import requests, json, time, paramiko, random, subprocess, os, sys, string
 from datetime import datetime
 from Crypto.PublicKey import RSA
 from os import chmod
@@ -17,17 +17,27 @@ def generate_name():
     dateTimeObj = datetime.now()
     timestamp = dateTimeObj.strftime("%d-%b-%Y (%H:%M)")
 
-    #generate random redirector name using the '/usr/share/dict/wordlist-probable.txt wordlist'
+    #generate random name
     global redirector_name
+    length = 6
+    word = ""
+    vowels = "aeiou"
+    consonants = "".join(set(string.ascii_lowercase) - set(vowels))
+
+    #generate 2 digit random number
     lower = 10**(2-1)
     upper = 10**2 - 1
     rn = random.randint(lower, upper)
-    wordlist = "/usr/share/dict/wordlist-probable.txt"
-    all_names = open(wordlist).read().splitlines()
-    filtered_names = [item for item in all_names if not item.isdigit()]
-    build_name = ''.join([filtered_names[random.randint(0, len(filtered_names))] for i in range(1)])
-    redirector_name = '%s%s' % (build_name,rn)
-    
+
+    #create name
+    for i in range(length):
+        if i % 2 == 0:
+            word += random.choice(consonants)
+        else:
+            word += random.choice(vowels)
+
+    redirector_name = '%s%s' % (word,rn)
+
     print("\n%s - Building redirector: %s\n" % (timestamp,redirector_name), file=open("/tmp/.redirerector.out", "a"))
     return redirector_name
 
@@ -285,20 +295,21 @@ def get_menu_choice():
     return [int_choice, choice]
 
 if __name__ == "__main__":
-    logfile = '/tmp/.redirerector.out' 
-    with open(logfile,'w'): pass
-    touch(logfile)
-    
-    #intial config
-    public_key_name = "/tmp/ssh.pub"
-    private_key_name = "/tmp/ssh.key"
-    do_token = "" or input("Enter DigitalOcean API token: ")
-    key_id = ""
-    droplet_ip = None
-    redirector_tag = "redirerector"
-    
-    #build tmux config
-    tmconfig = " \
+    if os.environ.get('DISPLAY'):
+        logfile = '/tmp/.redirerector.out' 
+        with open(logfile,'w'): pass
+        touch(logfile)
+        
+        #intial config
+        public_key_name = "/tmp/ssh.pub"
+        private_key_name = "/tmp/ssh.key"
+        do_token = "" or input("Enter DigitalOcean API token: ")
+        key_id = ""
+        droplet_ip = None
+        redirector_tag = "redirerector"
+        
+        #build tmux config
+        tmconfig = " \
             tmux set-option -g allow-rename off; \
             tmux new -A -s redirerector -n tool -d 'tail -F /tmp/.redirerector.out'; \
             tmux split-window -v; \
@@ -314,9 +325,11 @@ if __name__ == "__main__":
             tmux select-pane -t 0.0 -T 'LOG'; \
             tmux select-pane -t 0.2 -T 'LOCAL';"      
 
-    subprocess.Popen(tmconfig,shell=True).communicate()
+        subprocess.Popen(tmconfig,shell=True).communicate()
 
-    #launch new window for tmux
-    start_tmux = "xterm -bg grey19 -fg white -fs 11 -e 'tmux a -t redirerector'"
-    subprocess.Popen(start_tmux,shell=True)
-    print(get_menu_choice())
+        #launch new window for tmux
+        start_tmux = "xterm -bg grey19 -fg white -fs 11 -e 'tmux a -t redirerector'"
+        subprocess.Popen(start_tmux,shell=True)
+        print(get_menu_choice())
+    else:
+        print('Please install xterm; this script will launch a new xterm window/tmux to keep things organized.')
