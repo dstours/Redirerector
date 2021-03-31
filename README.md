@@ -20,7 +20,7 @@ At this point in time DigitalOcean is only supported as I wanted to build a quic
 Enter your choice [1-9]:
   ```
   
-# Installation
+# Usage
 This script utilizes xterm and tmux to keep things organized. Highly recommend installing them or things probably will not work.
 
 To run, either copy the redirerector.py script and install paramiko and the requests libraries...(or git clone the repo).
